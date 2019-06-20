@@ -1,0 +1,11 @@
+.card {
+  justify-self: center;
+  width: 100%;
+  height: 200px;
+  border: solid 1px black;
+  text-align: center;
+}
+
+.card-text {
+  margin-top: 80px;
+}

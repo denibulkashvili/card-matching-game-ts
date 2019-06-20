@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+<div
+  className="App"
+>
+  <h3>
+    Click "Start" to run the game
+  </h3>
+  <div>
+    <button
+      onClick={[Function]}
+    >
+      <b>
+        Start
+      </b>
+    </button>
+  </div>
+</div>
+`;
