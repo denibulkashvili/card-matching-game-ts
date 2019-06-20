@@ -1,13 +1,13 @@
-import React, { Fragment } from "react";
+import React from "react";
+import styled from "styled-components";
 import { ICard } from "../interfaces";
-import "./Card.css";
+
+const Text = styled.p`
+  margin-top: 60px;
+`;
 
 const Card: React.FC<ICard> = ({text}: ICard) => {
-  return (
-    <Fragment >
-      <p className="card-text">{text}</p>
-    </Fragment>
-  );
+  return <Text>{text}</Text>;
 };
 
 export default Card;

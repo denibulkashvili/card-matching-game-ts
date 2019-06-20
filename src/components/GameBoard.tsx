@@ -1,7 +1,31 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { Heading } from "../App";
 import initialCards from "../cards/cards";
 import { ICard } from "../interfaces";
 import Card from "./Card";
+
+interface ISingleCardWrapperProps {
+  isRevealed: boolean;
+}
+
+const CardSectionWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+`;
+
+const SingleCardWrapper = styled.div<ISingleCardWrapperProps>`
+  justify-self: center;
+  width: 100%;
+  height: 150px;
+  border: solid 1px black;
+  text-align: center;
+  border: 1px solid teal;
+
+  background: ${(props) => props.isRevealed ? "teal" : ""};
+  color: ${(props) => props.isRevealed ? "white" : ""};
+`;
 
 const GameBoard: React.FC = () => {
 
@@ -29,30 +53,32 @@ const GameBoard: React.FC = () => {
         setTimeout(() => {
           setRevealedCards([]);
         }, 1500);
-
       }
     }
   }, [revealedCards.length]);
 
   return (
-    <Fragment>
-      <h3>Click cards to match two of the same kind</h3>
-      <section className="cards-section">
+    <>
+      <Heading>Click cards to match two of the same kind</Heading>
+      <CardSectionWrapper>
         {cards.map((card: ICard) => (
-          <Fragment key={card.id} >
-            <div onClick={() => revealCard(card)} className="card" >
-              <Card
-                text={isInArray(card, revealedCards) || isInArray(card, matchedCards)
+          <SingleCardWrapper
+            key={card.id}
+            onClick={() => revealCard(card)}
+            isRevealed = {isInArray(card, revealedCards) || isInArray(card, matchedCards)}
+          >
+            <Card
+              text={
+                isInArray(card, revealedCards) || isInArray(card, matchedCards)
                   ? card.text
                   : ""
-                }
-                id={card.id}
-              />
-            </div>
-          </Fragment>
+              }
+              id={card.id}
+            />
+          </SingleCardWrapper>
         ))}
-      </section>
-    </Fragment>
+      </CardSectionWrapper>
+    </>
   );
 };
 
