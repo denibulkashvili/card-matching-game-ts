@@ -1,77 +1,53 @@
-import React, { Fragment, useContext, useEffect } from "react";
-import { IAction, ICard, IState } from "../interfaces";
-import { Store } from "../Store";
+import React, { Fragment, useEffect, useState } from "react";
+import initialCards from "../cards/cards";
+import { ICard } from "../interfaces";
 import Card from "./Card";
 
-const GameBoard = (props: IState): JSX.Element => {
+const GameBoard: React.FC = () => {
 
-  const {state, dispatch} = useContext(Store);
+  const [ cards, setNewCards ] = useState<ICard[]>(initialCards);
 
-  const compareRevealedCards = (): boolean => {
-    let revealedCardsMatched: boolean = false;
-    if (state.revealedCards.length === 2) {
-      if (state.revealedCards[0].text === state.revealedCards[1].text) {
-        revealedCardsMatched = true;
-      }
-    }
-    return revealedCardsMatched;
+  const [ revealedCards, setRevealedCards ] = useState<ICard[]>([]);
+  const [ matchedCards, setMatchedCards ] = useState<ICard[]>([]);
+
+  const isInArray = (card: ICard, array: ICard[]): boolean => {
+    return array.includes(card);
   };
 
-  const flipCard = (card: ICard): IAction => {
-    let dispatchObj: IAction = {
-      payload: card,
-      type: "",
-    };
-    // if there's already 1 card revealed cards
-    if (state.revealedCards.length === 0) {
-      dispatchObj = {
-        payload: card,
-        type: "REVEAL_CARD",
-      };
+  const revealCard = (card: ICard) => {
+    if (!isInArray(card, revealedCards) && revealedCards.length < 2) {
+      setRevealedCards([...revealedCards, card]);
     }
-    if (state.revealedCards.length === 1 && !state.revealedCards.includes(card)) {
-      // reveal
-      dispatchObj = {
-        payload: card,
-        type: "REVEAL_CARD",
-      };
-    }
-    if (state.revealedCards.length === 2) {
-      const isMatched: boolean = compareRevealedCards();
-      console.log(isMatched);
-      if (isMatched) {
-        console.log("and they are mached");
-        console.log();
-        dispatchObj = {
-          payload: [...state.revealedCards],
-          type: "HANDLE_MATCHED_CARDS",
-        };
+  };
+
+  useEffect(() => {
+    if (revealedCards.length === 2) {
+      if (revealedCards[0].text === revealedCards[1].text) {
+        setMatchedCards([...matchedCards, ...revealedCards]);
+        setRevealedCards([]);
       } else {
-        console.log("but they are not matched");
-        dispatchObj = {
-          payload: [],
-          type: "HANDLE_UNMATCHED_CARDS",
-        };
+        setTimeout(() => {
+          setRevealedCards([]);
+        }, 1500);
+
       }
     }
-    return dispatch(dispatchObj);
-  };
+  }, [revealedCards.length]);
 
-  const isCardTextVisisble = (card: ICard): boolean => {
-    return state.matchedCards.includes(card) || state.revealedCards.includes(card);
-  };
-  console.log("Revealed:");
-  console.log(state.revealedCards);
-  console.log("Matched:");
-  console.log(state.matchedCards);
   return (
     <Fragment>
       <h3>Click cards to match two of the same kind</h3>
       <section className="cards-section">
-        {props.cards.map((card: ICard, index: number) => (
-          <Fragment key={index} >
-            <div onClick={() => flipCard(card)} className="card" >
-              <Card text={isCardTextVisisble(card) ? card.text : ""} id={card.id} />
+        {cards.map((card: ICard) => (
+          <Fragment key={card.id} >
+            <div onClick={() => revealCard(card)} className="card" >
+              <Card
+                text={isInArray(card, revealedCards) || isInArray(card, matchedCards)
+                  ? card.text
+                  : ""
+                }
+                id={card.id}
+              />
             </div>
           </Fragment>
         ))}
